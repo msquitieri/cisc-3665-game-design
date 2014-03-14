@@ -100,14 +100,14 @@ class Agent {
    */
   void chase( PVector opponent ) {
     // calculate "difference" vector between this agent and the opponent
-    PVector diff = pos.sub( opponent,pos );
+    PVector diff = PVector.sub( opponent, pos );
     // compute the distance between this agent and the opponent (magnitude of difference vector)
     float d = diff.mag();
     if ( d > 0 ) {
       // normalize difference vector
       diff.normalize();
       // adjust x and y velocity according to the difference vector
-      vel = opponent.sub( diff, vel );
+      vel = PVector.sub( diff, vel );
     }
   } // end of chase()
   
