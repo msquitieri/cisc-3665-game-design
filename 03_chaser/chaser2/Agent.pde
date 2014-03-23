@@ -57,11 +57,14 @@ class Agent {
     stroke( mycolor );
     strokeWeight( 3 );
     ellipse( pos.x, pos.y, d, d );
+  } // end of draw()
+
+  void move() {
     if (( pos.x+vel.x < 0 ) || ( pos.x+vel.x > max_x - d )) vel.x = -(vel.x);
     if (( pos.y+vel.y < 0 ) || ( pos.y+vel.y > max_y - d )) vel.y = -(vel.y);
     pos.x += vel.x;
-    pos.y += vel.y;
-  } // end of draw()
+    pos.y += vel.y;    
+  }
 
   /**
    * kick()
