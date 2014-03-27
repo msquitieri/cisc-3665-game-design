@@ -27,28 +27,24 @@ class Obstacle {
     float obstacleRight = pos.x + LENGTH;
     float agentLeft = agent.getPos().x;
 
-    // if (obstacleRight < agentLeft) println("no RIGHT!");
     return obstacleRight < agentLeft;
   }
   private boolean noTopCollision(Agent agent) {
     float agentBottom = agent.getPos().y + agent.getDiameter();
     float obstacleTop = pos.y;
 
-    // if (obstacleTop > agentBottom) println("no TOP!");
     return obstacleTop > agentBottom;
   }
   private boolean noBottomCollision(Agent agent) {
     float agentTop = agent.getPos().y;
     float obstacleBottom = pos.y + LENGTH;
 
-    // if (obstacleBottom < agentTop) println("no BOTTOM!");
     return obstacleBottom < agentTop;
   }
   private boolean noLeftCollision(Agent agent) {
     float obstacleLeft = pos.x;
     float agentRight = agent.getPos().x + agent.getDiameter();
 
-    // if (obstacleLeft > agentRight) println("no LEFT!");
     return obstacleLeft > agentRight;
   }
 
