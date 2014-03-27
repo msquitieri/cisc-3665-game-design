@@ -10,6 +10,8 @@ class Agent {
   int max_x, max_y; // maximum x and y values for the agent (i.e., size of the arena)
   color mycolor; // the color for drawing the agent
 
+  private Queue<Integer> movementQueue = new LinkedList<Integer>();
+
   /**
    * agent constructor
    */
@@ -96,21 +98,100 @@ class Agent {
     vel.y = 0;
   } // end of stop()
 
+  private List<Integer> getListOfAllDirections() {
+    List<Integer> allDirections = new Vector<Integer>(4);
+
+    allDirections.add(NORTH);
+    allDirections.add(SOUTH);
+    allDirections.add(EAST);
+    allDirections.add(WEST);
+
+    return allDirections;
+  }
+
+  private List<Integer> getListOfPossibleDirections(Obstacle collidedObstacle) {
+    List<Integer> possibleDirections = getListOfAllDirections();
+    
+    // Must use new Integer(DIRECTION) to force the method 
+    // List.remove(Object obj) and not List.remove(int index)
+    if (collidedObstacle.hasTopCollisionWith(this)) { 
+      println("Top collision!");
+      possibleDirections.remove(new Integer(SOUTH));
+    }
+    if (collidedObstacle.hasBottomCollisionWith(this)) { 
+      println("Bottom collision!");
+      possibleDirections.remove(new Integer(NORTH));
+    }
+    if (collidedObstacle.hasLeftCollisionWith(this)) { 
+      println("Left collision!");
+      possibleDirections.remove(new Integer(EAST));
+    }
+    if (collidedObstacle.hasRightCollisionWith(this)) {
+      println("Right collision!");
+      possibleDirections.remove(new Integer(WEST));
+    }
+
+    return possibleDirections;
+  }
+
+  private PVector getVectorFromDirection(int direction) {
+    PVector directionVector = null;
+
+    if (direction == NORTH) directionVector = new PVector(0, -1);
+    else if (direction == SOUTH) directionVector = new PVector(0, 1);
+    else if (direction == EAST) directionVector = new PVector(1, 0);
+    else if (direction == WEST) directionVector = new PVector(-1, 0);
+
+    return directionVector;
+  }
+
   /**
    * chase()
    * this function implements the "line of sight" algorithm from 
    * ch 2 of AI for Game Developers by Bourg and Sleemann (2004)
    */
   void chase( PVector opponent ) {
-    // calculate "difference" vector between this agent and the opponent
-    PVector diff = pos.sub( opponent,pos );
-    // compute the distance between this agent and the opponent (magnitude of difference vector)
-    float d = diff.mag();
-    if ( d > 0 ) {
-      // normalize difference vector
-      diff.normalize();
-      // adjust x and y velocity according to the difference vector
-      vel = opponent.sub( diff, vel );
+
+    if (movementQueue.peek() != null) {
+      int direction = movementQueue.remove();
+      vel = getVectorFromDirection(direction);
+      return;
+    }
+
+    Obstacle collidedObstacle = getObstacleFromCollision(this);    
+    if (collidedObstacle != null) {
+      println("collided!!");
+
+      List<Integer> possibleDirections = getListOfPossibleDirections(collidedObstacle);
+      int newDirection = possibleDirections.get((int)Math.floor(random(0, possibleDirections.size())));
+
+      for (int i=0; i<30; i++) movementQueue.add(newDirection);
+
+      // if (newDirection == NORTH) {
+      //   println("changing direction to NORTH");
+      // }
+      // else if (newDirection == SOUTH) { 
+      //   println("changing direction to SOUTH");
+      // }
+      // else if (newDirection == EAST) { 
+      //   println("changing direction to EAST");
+      // }
+      // else { 
+      //   println("changing direction to WEST");
+      // }
+        
+    } else {
+      // calculate "difference" vector between this agent and the opponent
+      PVector diff = pos.sub( opponent,pos );
+      // compute the distance between this agent and the opponent (magnitude of difference vector)
+      float d = diff.mag();
+
+      if ( d > 0 ) {
+        // normalize difference vector
+        diff.normalize();
+        // adjust x and y velocity according to the difference vector
+        vel = opponent.sub( diff, vel );
+      }
     }
   } // end of chase()
   
@@ -123,4 +204,3 @@ class Agent {
    } // end of evade()
    
 } // end of agent class
-
