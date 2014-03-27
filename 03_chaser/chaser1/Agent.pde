@@ -37,7 +37,7 @@ class Agent {
    * returns the agent's current (x,y) position
    */
   PVector getPos() {
-    return( pos );
+    return( pos.get() );
   } // end of getPos()
 
   /**
@@ -57,6 +57,10 @@ class Agent {
     stroke( mycolor );
     strokeWeight( 3 );
     ellipse( pos.x, pos.y, d, d );
+
+    // Draw direction vector
+    // line(pos.x+d/2, pos.y+d/2, pos.x+d/2+5*vel.x, pos.y+d/2+5*vel.y);
+
     if (( pos.x+vel.x < 0 ) || ( pos.x+vel.x > max_x - d )) vel.x = -(vel.x);
     if (( pos.y+vel.y < 0 ) || ( pos.y+vel.y > max_y - d )) vel.y = -(vel.y);
     pos.x += vel.x;
@@ -93,6 +97,10 @@ class Agent {
     vel.y = 0;
   } // end of stop()
 
+  void chase (Agent opponent) {
+    chase( opponent.getPos() );
+  }
+
   /**
    * chase()
    * this function implements the "line of sight" algorithm from 
@@ -111,12 +119,26 @@ class Agent {
     }
   } // end of chase()
   
+  void evade ( Agent opponent ) {
+    evade( opponent.getPos() );
+  }
+
   /**
    * evade()
    *
    */
-   void evade() {
-     //** YOU NEED TO WRITE THIS CODE! **
+   void evade( PVector opponent ) {
+    // calculate "difference" vector between this agent and the opponent
+    PVector diff = PVector.sub( pos, opponent );
+    // compute the distance between this agent and the opponent (magnitude of difference vector)
+    float d = diff.mag();
+    if ( d > 0 ) {
+      // normalize difference vector
+      diff.normalize();
+      diff.rotate(degrees(270));
+
+      vel = diff;
+    }
    } // end of evade()
    
 } // end of agent class
