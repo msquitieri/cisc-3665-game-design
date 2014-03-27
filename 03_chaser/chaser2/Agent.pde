@@ -193,14 +193,5 @@ class Agent {
         vel = opponent.sub( diff, vel );
       }
     }
-  } // end of chase()
-  
-  /**
-   * evade()
-   *
-   */
-   void evade() {
-     //** YOU NEED TO WRITE THIS CODE! **
-   } // end of evade()
-   
+  } // end of chase()  
 } // end of agent class
