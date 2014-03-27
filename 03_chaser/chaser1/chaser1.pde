@@ -51,7 +51,8 @@ void draw() {
       running = false;
     }
     else {
-      opponent.chase( avatar.getPos() );
+      opponent.evade( avatar );
+      // opponent.chase( avatar );
     }
   }
 } // end of draw()
