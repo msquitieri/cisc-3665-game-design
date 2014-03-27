@@ -47,7 +47,7 @@ void setup() {
 } // end of setup()
 
 void initObstacles() {
-  int numObstacles = 10;
+  int numObstacles = 8;
 
   obstacles.clear();
   for (int i=0; i<numObstacles; i++) {
