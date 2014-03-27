@@ -15,11 +15,16 @@ static final int WEST  = 1;
 static final int SOUTH = 2;
 static final int EAST  = 3;
 
+int min_x, min_y, max_x, max_y;
+
+import java.util.*;
+
 PFont font;
 boolean running; // flag set to true while the game is running
 Agent avatar; // human player chases the opponent
 Agent opponent; // computer player tries to evade the human
 
+Collection<Obstacle> obstacles = new HashSet<Obstacle>();
 
 /**
  * setup()
@@ -31,8 +36,33 @@ void setup() {
   avatar = new Agent( 500, 500, #990099 );
   opponent = new Agent( 500, 500, #009900 );
   running = true;
+  
+  min_x = 0;
+  max_x = width - Obstacle.LENGTH;
+  min_y = 0;
+  max_y = height - Obstacle.LENGTH;
+
+  initObstacles();
+
 } // end of setup()
 
+void initObstacles() {
+  int numObstacles = 10;
+
+  obstacles.clear();
+  for (int i=0; i<numObstacles; i++) {
+    obstacles.add(new Obstacle(getRandomPosition()));
+  }
+}
+
+PVector getRandomPosition() {
+  int x = (int)random(min_x, max_x);
+  int y = (int)random(min_y, max_y);
+
+  // println("("+x+","+y+")");
+
+  return new PVector(x, y);
+}
 
 /**
  * draw()
@@ -40,8 +70,21 @@ void setup() {
 void draw() {
   if ( running ) {
     background( #ffffff );
+
+    avatar.move();
     avatar.draw();
+    
+    opponent.move();
     opponent.draw();
+
+    for (Obstacle obstacle : obstacles) obstacle.draw();
+
+    Obstacle collidedObstacle = getObstacleFromCollision(avatar);
+    if (collidedObstacle != null) {
+      // println("collided!!");
+      avatar.stop();
+    }
+
     if ( isCaught() ) {
       avatar.stop();
       opponent.stop();
@@ -66,13 +109,21 @@ boolean isCaught() {
   float r2 = opponent.getDiameter() / 2;
   PVector opponentCenter = new PVector( opponent.getPos().x+r2, opponent.getPos().y+r2 );
   float d = sqrt( sq(avatarCenter.x - opponentCenter.x) + sq(avatarCenter.y - opponentCenter.y ));
-  if ( d < r1 + r2 ) {
-    return( true );
-  }
-  else {
-    return( false );
-  }
+
+  if ( d < r1 + r2 ) return true;
+  return false;
 } // end of isCaught()
+
+boolean didCollideWithObstacle(Agent agent) {
+  return getObstacleFromCollision(agent) != null;
+}
+
+Obstacle getObstacleFromCollision(Agent agent) {
+  for (Obstacle obstacle : obstacles) {
+    if (obstacle.hasCollisionWith(agent)) return obstacle;
+  }
+  return null;
+}
 
 /**
  * keyReleased()
@@ -106,6 +157,8 @@ void keyReleased() {
   else if (( key == 'r' ) || ( key == 'R' )) {
     avatar.reset();
     opponent.reset();
+    obstacles.clear();
+    initObstacles();
     running = true;
   }
   else if (( key == 'q' ) || ( key == 'Q' )) {
