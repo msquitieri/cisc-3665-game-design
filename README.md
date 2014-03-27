@@ -18,3 +18,11 @@ Lab 2 : Tileworld
 ===============
 
 Using a preexisting tileworld code consisting of an agent, obstacles, tiles, and holes, flesh out the functionality of the world by giving the agent *some* intelligence. Prevent the agent from travelling into an obstacle. If the agent falls into a hole, then it is game over. But, if the agent pushes a tile into a hole, it should receive $1. The agent acts *mostly* randomly, and does not try and win the game in any meaningful way.
+
+Lab 3 : Chaser
+===============
+
+This lab consisted of a simple game where a player must chase, or run away from, an opponent. Two projects were asked for:
+
+- chaser1 : Let the user become the chaser and implement an algorithm for the computer agent to evade the user.
+- chaser2 : Incorporate obstacles into the game world, and implement an algorithm for the computer agent to go around obstacles.
