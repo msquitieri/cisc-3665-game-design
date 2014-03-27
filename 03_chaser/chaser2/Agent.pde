@@ -145,6 +145,32 @@ class Agent {
     return directionVector;
   }
 
+  Integer getRandomDirectionFromList(List<Integer> directions) {
+    if (directions.size() == 0) return null;
+    return directions.get((int)Math.floor(random(0, directions.size())));
+  }
+
+  Integer getBestDirectionFromList(List<Integer> directions, PVector opponent, Integer STEPS) {
+    Map<Float, Integer> distanceToDirectionMap = new TreeMap<Float, Integer>();
+
+    Float distance;
+    PVector newPosition, newVelocity;
+    for (Integer direction : directions) {
+      newVelocity = getVectorFromDirection(direction);  
+      newVelocity.mult(STEPS);
+
+      newPosition = PVector.add(pos, newVelocity);
+
+      distance = PVector.dist(newPosition, opponent);
+
+      distanceToDirectionMap.put(distance, direction);
+    }
+
+    float min = Collections.min(distanceToDirectionMap.keySet());
+
+    return distanceToDirectionMap.get(min);
+  }
+
   /**
    * chase()
    * this function implements the "line of sight" algorithm from 
@@ -162,23 +188,25 @@ class Agent {
     if (collidedObstacle != null) {
       println("collided!!");
 
+      final int STEPS = 30;
       List<Integer> possibleDirections = getListOfPossibleDirections(collidedObstacle);
-      int newDirection = possibleDirections.get((int)Math.floor(random(0, possibleDirections.size())));
+      // int newDirection = getRandomDirectionFromList(possibleDirections);
+      int newDirection = getBestDirectionFromList(possibleDirections, opponent, STEPS);
 
-      for (int i=0; i<30; i++) movementQueue.add(newDirection);
+      for (int i=0; i<STEPS; i++) movementQueue.add(newDirection);
 
-      // if (newDirection == NORTH) {
-      //   println("changing direction to NORTH");
-      // }
-      // else if (newDirection == SOUTH) { 
-      //   println("changing direction to SOUTH");
-      // }
-      // else if (newDirection == EAST) { 
-      //   println("changing direction to EAST");
-      // }
-      // else { 
-      //   println("changing direction to WEST");
-      // }
+      if (newDirection == NORTH) {
+        println("changing direction to NORTH");
+      }
+      else if (newDirection == SOUTH) { 
+        println("changing direction to SOUTH");
+      }
+      else if (newDirection == EAST) { 
+        println("changing direction to EAST");
+      }
+      else { 
+        println("changing direction to WEST");
+      }
         
     } else {
       // calculate "difference" vector between this agent and the opponent
